@@ -11,6 +11,7 @@ from lib.plugins.Get_PrefetchListing import *
 from lib.plugins.Get_PrefetchFiles import *
 from lib.plugins.Get_Prox import *
 from lib.plugins.Get_SmbSession import *
+from lib.plugins.Get_Tasklistv import *
 
 # 功能：本程序旨在为安全应急响应人员对Linux主机排查时提供便利，实现主机侧安全Checklist的自动化，用于快速主机安全点排查。
 
@@ -31,13 +32,13 @@ if __name__ == '__main__':
     arp_table = Get_Arp()
     table = arp_table.get_table()
     for row in table:
-        print(row)
+        print(row, "\n")
 
     #DNS Ccache缓存条目
     dns_cache = Get_DNSCache()
     cache_entries = dns_cache.get_cache()
     for entry in cache_entries:
-        print(entry)
+        print(entry, "\n")
 
     #Netstat获取系统网络信息
     netstat = Get_Netstat()
@@ -54,7 +55,7 @@ if __name__ == '__main__':
     handle_data = Get_Handle()
     results = handle_data.get_handle_data()
     for result in results:
-        print(result)
+        print(result, "\n")
 
     #获取Windows操作系统中的预取文件（Prefetch Files），并将它们打包为一个Zip文件
     pf = Get_PrefetchFiles()
@@ -63,15 +64,17 @@ if __name__ == '__main__':
     #获取当前系统中所有进程的数据
     pd = Get_Prox()
     output = pd.get_process_data()
-    print(output)
+    print(output, "\n")
 
     #获取当前系统所有smb信息
     smb = Get_SmbSession()
     output = smb.get_smb_session()
-    print(output)
+    print(output, "\n")
 
-
-
+    #获取当前系统所有进程
+    tl = Get_Tasklistv()
+    output = tl.get_task_list()
+    print(output, "\n")
 
 
 
