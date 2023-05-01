@@ -1,7 +1,7 @@
 import subprocess
 import re
 
-class ARPTable:
+class Get_Arp:
 
     def __init__(self):
         if subprocess.run(["powershell","Get-NetNeighbor"], capture_output=True).returncode == 0:

@@ -4,7 +4,7 @@ import socket
 import subprocess
 from typing import List, Tuple
 
-class Netstat:
+class Get_Netstat:
     def __init__(self):
         self.results = []
 

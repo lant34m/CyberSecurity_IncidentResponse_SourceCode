@@ -1,0 +1,44 @@
+import subprocess
+import os
+import zipfile
+import base64
+from datetime import datetime
+import glob
+
+class Get_PrefetchFiles:
+    def __init__(self):
+        self.prefetch_key_path = r'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters'
+        self.enable_prefetcher_value_name = 'EnablePrefetcher'
+        self.windir = os.environ['WINDIR']
+        self.temp_dir = os.environ['TEMP']
+
+    def get_base64_zip_stream(self, file_path):
+        with open(file_path, 'rb') as f_in:
+            return base64.b64encode(f_in.read()).decode()
+
+    def add_to_zip(self, zip_file, file_path):
+        zip_file.write(file_path, os.path.basename(file_path))
+
+    def get_prefetch_files(self):
+        result = subprocess.run(['powershell.exe', f'(Get-ItemProperty -Path "{self.prefetch_key_path}" -Name "{self.enable_prefetcher_value_name}")."{self.enable_prefetcher_value_name}"'],
+                                stdout=subprocess.PIPE, check=True, text=True)
+        prefetch_enabled = int(result.stdout.strip())
+        if prefetch_enabled not in range(1, 4):
+            return None
+
+        computer_name = os.environ['COMPUTERNAME']
+        zip_file_path = os.path.join(self.temp_dir, f"{computer_name}-PrefetchFiles.zip")
+        print("Prefetch files have been compressed into ZipFile", zip_file_path)
+        with zipfile.ZipFile(zip_file_path, mode='w', compression=zipfile.ZIP_DEFLATED) as zip_file:
+            for file_path in glob.glob(os.path.join(self.windir, 'Prefetch', '*.pf')):
+                self.add_to_zip(zip_file, file_path)
+
+        zip_file_stats = os.stat(zip_file_path)
+        return {
+            'FullName': zip_file_path,
+            'Length': zip_file_stats.st_size,
+            'CreationTimeUtc': datetime.utcfromtimestamp(zip_file_stats.st_ctime).isoformat(),
+            'LastAccessTimeUtc': datetime.utcfromtimestamp(zip_file_stats.st_atime).isoformat(),
+            'LastWriteTimeUtc': datetime.utcfromtimestamp(zip_file_stats.st_mtime).isoformat(),
+            'Content': self.get_base64_zip_stream(zip_file_path),
+        }
