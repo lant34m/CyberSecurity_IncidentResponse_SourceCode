@@ -12,8 +12,13 @@ from lib.plugins.Get_PrefetchFiles import *
 from lib.plugins.Get_Prox import *
 from lib.plugins.Get_SmbSession import *
 from lib.plugins.Get_Tasklistv import *
+from lib.plugins.Get_ProcWMI import *
+from lib.plugins.Get_ProcDump import *
+from lib.plugins.Get_ProcsNModules import *
+from lib.plugins.Get_NetRoutes import *
+from lib.plugins.Get_NetIPInterfaces import *
 
-# 功能：本程序旨在为安全应急响应人员对Linux主机排查时提供便利，实现主机侧安全Checklist的自动化，用于快速主机安全点排查。
+# 功能：本程序旨在为安全应急响应人员对Windows主机排查时提供便利，实现主机侧安全Checklist的自动化，用于快速主机安全点排查。
 
 
 if __name__ == '__main__':
@@ -75,6 +80,31 @@ if __name__ == '__main__':
     tl = Get_Tasklistv()
     output = tl.get_task_list()
     print(output, "\n")
+
+    #获取进程的属性包括进程名、进程命令行、进程所有者和文件哈希值
+    #pp = Get_ProcWMI() 普通用法，默认MD5算法
+    pp = Get_ProcWMI(hash_type="SHA256")    #进阶用法，指定算法
+    for item_properties in pp.get_process_properties():
+        print(item_properties)
+
+    #获取进程的转储
+    proc_dump = Get_ProcDump(1234) # Replace 1234 with your process ID
+    dump_result = proc_dump.dump()
+    print(dump_result)
+
+    #计算正在运行的进程中所有模块的哈希值，并输出每个模块的名称、哈希值和其他相关信息。
+    fh = Get_ProcsNModules()
+    fh.run()
+
+    #获取 Windows 操作系统中当前网络所有 IP 路由表项的详细信息
+    gn = Get_NetRoutes()
+    output_str = gn.run()
+    print(output_str)
+
+    #获取 Windows 操作系统中当前网络所有 IP 路由表项的详细信息
+    gn = Get_NetIPInterfaces()
+    output_str = gn.run()
+    print(output_str)
 
 
 
