@@ -17,6 +17,7 @@ from lib.plugins.Get_ProcDump import *
 from lib.plugins.Get_ProcsNModules import *
 from lib.plugins.Get_NetRoutes import *
 from lib.plugins.Get_NetIPInterfaces import *
+from lib.plugins.Get_LogWinEvent import *
 
 # 功能：本程序旨在为安全应急响应人员对Windows主机排查时提供便利，实现主机侧安全Checklist的自动化，用于快速主机安全点排查。
 
@@ -106,6 +107,25 @@ if __name__ == '__main__':
     output_str = gn.run()
     print(output_str)
 
+    #根据Windows事件日志名称、天数和事件ID查询Windows事件
+    event_log = Get_LogWinEvent('Security')
+    event_log.query_event_log()
+    event_log = Get_LogWinEvent('Microsoft-Windows-Application-Experience/Program-Inventory')
+    event_log.query_event_log()
+    event_log = Get_LogWinEvent('Microsoft-Windows-Application-Experience/Program-Telemetry')
+    event_log.query_event_log()
+    event_log = Get_LogWinEvent('Microsoft-Windows-AppLocker/EXE and DLL')
+    event_log.query_event_log()
+    event_log = Get_LogWinEvent('Microsoft-Windows-AppLocker/MSI and Script')
+    event_log.query_event_log()
+    event_log = Get_LogWinEvent('Microsoft-Windows-AppLocker/Packaged app-Deployment')
+    event_log.query_event_log()
+    event_log = Get_LogWinEvent('Microsoft-Windows-Shell-Core/Operational')
+    event_log.query_event_log()
+    event_log = Get_LogWinEvent('Microsoft-Windows-TerminalServices-LocalSessionManager/Operational')
+    event_log.query_event_log()
+    event_log = Get_LogWinEvent('Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational')
+    event_log.query_event_log()
 
 
 
